@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: hacker-company
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: redis
+  namespace: hacker-company
+  labels:
+    name: redis
+    namespace: hacker-company
+spec:
+  volumes:
+  - name: data
+    persistentVolumeClaim:
+       claimName: redis-data-claim
+  containers:
+  - name: redis-new
+    image: redis:buster
+    volumeMounts:
+      - mountPath: /data
+        name: data
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    ports:
+      - containerPort: 6379
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: redis-data
+  namespace: hacker-company
+spec:
+  storageClassName: local
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-data-claim
+  namespace: hacker-company
+spec:
+  storageClassName: local
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
