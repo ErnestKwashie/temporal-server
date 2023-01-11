@@ -35,7 +35,7 @@ metadata:
   name: redis-data
   namespace: hacker-company
 spec:
-  storageClassName: local
+  storageClassName: local 
   capacity:
     storage: 1Gi
   accessModes:
